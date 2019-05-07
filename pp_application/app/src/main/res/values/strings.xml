@@ -1,6 +1,30 @@
 <resources>
     <string name="app_name">pp_application</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="app_author">Yim Tsun Ho, Nicky</string>
+    <string name="app_publisher">Leeds Beckett University, HKCT</string>
+    <string name="def_version_value">v1.00.0</string>
+    <string name="title_syslog">System Login</string>
+    <string name="title_account">Account</string>
+    <string name="title_info">Info</string>
+    <string name="title_changeuser">Change User</string>
+
+    <string name="error_network_title">Network</string>
+    <string name="error_network_disconnect">Network is disconnected</string>
+    <string name="error_login_title">Login</string>
+    <string name="error_not_login_yet">You must Login to the application first</string>
+    <string name="error_fp_title">Fingerprint</string>
+    <string name="fp_hints">Login with your fingerprint.</string>
+    <string name="error_fp_lock_disable">Your smartphone have not setting the fingerprint lock</string>
+    <string name="error_fp_hardware_disable">Your smartphone have not install the fingerprint lock</string>
+    <string name="error_fp_record_null">Your smartphone have not set the fingerprint record</string>
+
+    <string name="info">System Information</string>
+    <string name="syslog">System Login</string>
+    <string name="changeuser">Change User</string>
+    <string name="def_username">Guest</string>
+    <string name="def_uid">-</string>
+    <string name="def_department">none</string>
+    <string name="todo">TODO</string>
+
+
 </resources>
