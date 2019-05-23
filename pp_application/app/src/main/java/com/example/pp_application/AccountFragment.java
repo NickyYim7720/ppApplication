@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -19,6 +20,7 @@ public class AccountFragment extends Fragment {
     private String TAG = "AccountFragment ===> ";
     private View view;
     private TextView username, userid, userdepartment;
+    private ImageView userImg;
     private String uname, department, uid;
 
 
@@ -40,14 +42,16 @@ public class AccountFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_account, container, false);
 
+        userImg = (ImageView) view.findViewById(R.id.userImg);
         username = (TextView) view.findViewById(R.id.username);
         userid = (TextView) view.findViewById(R.id.userid);
         userdepartment = (TextView) view.findViewById(R.id.userdepartment);
         Log.d(TAG, "uname = " + uname + " uid = " + uid + "department = " + department);
 
-        username.setText(uname);
-        userid.setText(uid);
-        userdepartment.setText(department);
+        userImg.setImageResource(R.mipmap.user_image);
+        username.setText("User Name: " + uname);
+        userid.setText("User ID: " + uid);
+        userdepartment.setText("Department: " + department);
 
         return view;
     }

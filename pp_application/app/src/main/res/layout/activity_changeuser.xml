@@ -7,7 +7,19 @@
     android:background="@android:color/darker_gray"
     tools:context=".ChangeUserActivity">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="10dp"
+        android:src="@android:drawable/btn_dialog"
+        app:backgroundTint="@android:color/darker_gray"
+        tools:layout_editor_absoluteX="355dp"
+        tools:layout_editor_absoluteY="0dp" />
+
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -15,7 +27,7 @@
         <ImageView
             android:id="@+id/loginLogo"
             android:layout_width="match_parent"
-            android:layout_height="432dp"
+            android:layout_height="386dp"
             android:src="@mipmap/login_image" />
 
         <EditText
@@ -23,9 +35,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:hint="user name"
             android:inputType="textPersonName"
-            android:textColor="@color/textColor"
-            android:text="Name" />
+            android:textColor="@color/textColor" />
 
         <EditText
             android:id="@+id/password"
@@ -33,8 +45,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="password"
-            android:textColor="@color/textColor"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/textColor" />
 
         <Space
             android:layout_width="match_parent"
@@ -45,7 +57,15 @@
             android:layout_width="202dp"
             android:layout_height="69dp"
             android:layout_gravity="center"
-            android:background="@mipmap/login_button" />
+            android:background="@mipmap/login_button"
+            android:onClick="btn_login_click" />
+
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="btn_logout_click"
+            android:text="Logout" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -7,6 +7,12 @@
     <string name="title_account">Account</string>
     <string name="title_info">Info</string>
     <string name="title_changeuser">Change User</string>
+    <string name="title_setting">Setting</string>
+    <string name="info_appname">App Name: </string>
+    <string name="info_appversion">App Version: </string>
+    <string name="info_appauthor">Author: </string>
+    <string name="info_apppublisher">Publisher: </string>
+    <string name="info_serpath">Current Server: </string>
 
     <string name="error_network_title">Network</string>
     <string name="error_network_disconnect">Network is disconnected</string>
@@ -24,7 +30,13 @@
     <string name="def_username">Guest</string>
     <string name="def_uid">-</string>
     <string name="def_department">none</string>
+    <string name="def_server">0.0.0.0</string>
     <string name="todo">TODO</string>
 
+    <string name="syslog_error">This will show up when user have not login in the application.</string>
+    <string name="syslog_hints">Put your finger on your fingerprint scanner</string>
+    <string name="btn_scan">Start to Scan</string>
+    <string name="btn_cancel">Cancel Login</string>
+    <string name="setting_hints">This will affect to your application login and system login.</string>
 
 </resources>

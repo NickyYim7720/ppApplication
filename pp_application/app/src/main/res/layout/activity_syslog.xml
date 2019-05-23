@@ -8,4 +8,74 @@
     android:background="@android:color/darker_gray"
     tools:context=".SyslogActivity">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="10dp"
+        android:src="@android:drawable/btn_dialog"
+        app:backgroundTint="@android:color/darker_gray"
+        tools:layout_editor_absoluteX="355dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_Txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syslog"
+            android:textAlignment="center"
+            android:textColor="@color/textColor"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <Space
+            android:id="@+id/errorSpace"
+            android:layout_width="match_parent"
+            android:layout_height="278dp" />
+
+        <TextView
+            android:id="@+id/errorTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syslog_error"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/fingerImg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/fingerprint_icon" />
+
+        <TextView
+            android:id="@+id/syslogTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/syslog_hints"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="btn_scan_Click"
+            android:text="@string/btn_scan" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="btn_cancel_Click"
+            android:text="@string/btn_cancel" />
+
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

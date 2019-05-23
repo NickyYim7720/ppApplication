@@ -3,6 +3,7 @@ package com.example.pp_application;
 import android.Manifest;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
@@ -10,9 +11,14 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.EditText;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Space;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -30,16 +36,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
 public class SyslogActivity extends AppCompatActivity {
 
     private static String TAG = "LoginActivity===>";
-    String login_code;
+    String syslog_code, login_code;
     private FingerprintManager fpM;
     private KeyguardManager kygM;
     private CancellationSignal cancellationSignal;
-    EditText server, txtuname, txtPasswd;
+    private ImageView fingerImg;
+    private Button btn_cancel, btn_scan;
+    private TextView errorTxt, syslogTxt;
+    private Space errorSpace;
+    private FloatingActionButton floatBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +58,69 @@ public class SyslogActivity extends AppCompatActivity {
 
         kygM = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
         fpM = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+        errorSpace = (Space) findViewById(R.id.errorSpace);
+        errorTxt = (TextView) findViewById(R.id.errorTxt);
+        syslogTxt = (TextView) findViewById(R.id.syslogTxt);
+        btn_cancel = (Button) findViewById(R.id.btn_cancel);
+        btn_scan = (Button) findViewById(R.id.btn_scan);
+        fingerImg = (ImageView) findViewById(R.id.fingerImg);
+        floatBtn = (FloatingActionButton) findViewById(R.id.floatBtn);
 
-        init(Functions.getPref("IS_LOGIN", getApplicationContext()));
+        floatBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                closeAct();
+            }
+        });
 
+        init();
     }
 
-    public void init(String loginCode) {
+    private void closeAct(){
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        this.finish();
+    }
+
+    public void init(){
+        syslog_code = Functions.getPref("SYSLOG_CODE", getApplicationContext());
+        login_code = Functions.getPref("LOGIN_CODE", getApplicationContext());
+        if (login_code.matches("") || login_code.matches("0")){
+            errorSpace.setVisibility(View.VISIBLE);
+            errorTxt.setVisibility(View.VISIBLE);
+            fingerImg.setVisibility(View.GONE);
+            syslogTxt.setVisibility(View.GONE);
+            btn_scan.setVisibility(View.GONE);
+            btn_cancel.setVisibility(View.GONE);
+        }else{
+            errorSpace.setVisibility(View.GONE);
+            errorTxt.setVisibility(View.GONE);
+            fingerImg.setVisibility(View.VISIBLE);
+            syslogTxt.setVisibility(View.VISIBLE);
+            if (syslog_code.matches("") || syslog_code.matches("0")){
+                btn_scan.setVisibility(View.VISIBLE);
+                btn_cancel.setVisibility(View.GONE);
+            }else if(syslog_code.matches("1")){
+                btn_scan.setVisibility(View.GONE);
+                btn_cancel.setVisibility(View.VISIBLE);
+            }else if(syslog_code.matches("2")){
+                btn_scan.setVisibility(View.VISIBLE);
+                btn_cancel.setVisibility(View.GONE);
+                Functions.setPref("SYSLOG_CODE", "0", getApplicationContext());
+                syslog_code = Functions.getPref("SYSLOG_CODE", getApplicationContext());
+            }
+        }
+    }
+    public void btn_scan_Click(View v){
+        fpScan(login_code);
+        btn_scan.setVisibility(View.GONE);
+    }
+
+    public void btn_cancel_Click(View v){
+        cancelLog();
+    }
+
+    public void fpScan(String loginCode) {
         if (loginCode.matches("0") || loginCode.matches("")) {
             Log.d(TAG, "loginCode = 0");
             Functions.showDialog(this, getString(R.string.error_login_title), getString(R.string.error_not_login_yet));
@@ -113,46 +178,76 @@ public class SyslogActivity extends AppCompatActivity {
         @Override
         public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
             Log.d(TAG, "onAuthenticationSucceeded");
-            login();
+            syslog();
         }
 
     };
 
 
-    public void login() {
-        Log.d(TAG, "login()");
+    public void syslog() {
+        Log.d(TAG, "syslog()");
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connManager.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnected()) {
-            Log.d(TAG, "login()->network OK");
-            String _uname = txtuname.getText().toString();
-            String _passwd = txtPasswd.getText().toString();
-            Functions.setPref("SERVER", server.getText().toString(), getApplicationContext());
-            String _address = Functions.getPref("SERVER", getApplicationContext());
-            String _server = "http://" + _address + "/php/login.php";
+            Log.d(TAG, "syslog()->network OK");
+            String _uname = Functions.getPref("UNAME", getApplicationContext());
+            String _uid = Functions.getPref("UID", getApplicationContext());
+            String _address = Functions.getPref("SERVER_PATH", getApplicationContext());
+            String _server = "http://" + _address + "/php/pp/syslog.php";
             Log.d(TAG, "server path = " + _server);
 
-            try {
-                new loginAST(getApplicationContext()).execute(_server, _uname, _passwd);
+            if(_uname.matches("") || _uname.matches(getText(R.string.def_username).toString()) ||
+               _uid.matches("") || _uid.matches(getText(R.string.def_uid).toString())){
+                Functions.showDialog(this, getText(R.string.error_login_title).toString(), getText(R.string.error_not_login_yet).toString());
+                Intent intent = new Intent(this, ChangeUserActivity.class);
+                startActivity(intent);
+            }else{
+                try {
+                    new syslogAST(getApplicationContext()).execute(_server, _uname, _uid);
 
-            } catch (SecurityException e) {
-                e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
             }
+
         } else {
             Log.d(TAG, "no network");
             Functions.showDialog(this, getString(R.string.error_network_title), getString(R.string.error_network_disconnect));
         }
-
     }
 
+    public void cancelLog() {
+        Log.d(TAG, "cancelLog()");
+        Log.d(TAG, "syslog()");
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = connManager.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnected()) {
+            Log.d(TAG, "syslog()->network OK");
+            String _uname = Functions.getPref("UNAME", getApplicationContext());
+            String _uid = Functions.getPref("UID", getApplicationContext());
+            String _address = Functions.getPref("SERVER_PATH", getApplicationContext());
+            String _server = "http://" + _address + "/php/pp/cancellog.php";
+            Log.d(TAG, "server path = " + _server);
+            try {
+                new syslogAST(getApplicationContext()).execute(_server, _uname, _uid);
 
-    public class loginAST extends AsyncTask<String, Void, String> {
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            Log.d(TAG, "no network");
+            Functions.showDialog(this, getString(R.string.error_network_title), getString(R.string.error_network_disconnect));
+        }
+    }
+
+    public class syslogAST extends AsyncTask<String, Void, String> {
 
         //Properties
         Context context;
 
         //Constructor
-        loginAST(Context context) {
+        syslogAST(Context context) {
             this.context = context;
         }
 
@@ -164,11 +259,11 @@ public class SyslogActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String _server = params[0];
             String _uname = params[1];
-            String _passwd = params[2];
+            String _uid = params[2];
             int response_code;
             String response = "";
 
-            Log.d(TAG, "loginAST->_server = " + _server + ", _uname = " + _uname + ", _passwd = " + _passwd);
+            Log.d(TAG, "syslogAST->_server = " + _server + ", _uname = " + _uname + ", _uid = " + _uid);
 
             try {
                 URL url = new URL(_server);
@@ -180,7 +275,7 @@ public class SyslogActivity extends AppCompatActivity {
 
                 //set POST data
                 String data = URLEncoder.encode("uname", "UTF-8") + "=" + URLEncoder.encode(_uname, "UTF-8");
-                data += "&" + URLEncoder.encode("passwd", "UTF-8") + "=" + URLEncoder.encode(_passwd, "UTF-8");
+                data += "&" + URLEncoder.encode("uid", "UTF-8") + "=" + URLEncoder.encode(_uid, "UTF-8");
 
                 //send POST data
                 OutputStream outputS = httpURLC.getOutputStream();
@@ -229,32 +324,31 @@ public class SyslogActivity extends AppCompatActivity {
             result = Functions.parseJSON(result);
             try {
                 JSONObject jsonO = new JSONObject(result);
-                if ((String.valueOf(jsonO.optString("STATUS")).matches("1"))) {
+                if ((String.valueOf(jsonO.optString("STATUS")).matches("1")) || (String.valueOf(jsonO.optString("STATUS")).matches("2"))) {
                     String _status = jsonO.optString("STATUS");
-                    String _name = jsonO.optString("NAME");
-                    String _uid = jsonO.optString("UID");
                     String _message = jsonO.optString("MESSAGE");
 
                     //Update Shared Preferences
-                    Functions.setPref("LOGIN_CODE", _status, getApplicationContext());
-                    Log.d(TAG, "loginAST->login_code = " + Functions.getPref("LOGIN_CODE", getApplicationContext()));
-                    Functions.setPref("UNAME", _name, getApplicationContext());
-                    Log.d(TAG, "loginAST->user_name = " + Functions.getPref("UNAME", getApplicationContext()));
-                    Functions.setPref("UID", _uid, getApplicationContext());
-                    Log.d(TAG, "loginAST->user_id = " + Functions.getPref("UID", getApplicationContext()));
+                    Functions.setPref("SYSLOG_CODE", _status, getApplicationContext());
+                    Log.d(TAG, "syslogAST->syslog_code = " + Functions.getPref("SYSLOG_CODE", getApplicationContext()));
 
                     //Popup message for user
                     Toast.makeText(context.getApplicationContext(), _message, Toast.LENGTH_SHORT).show();
-                    init(Functions.getPref("LOGIN_CODE", context.getApplicationContext()));
+
+                    //review the page setting
+                    init();
 
                 } else {
                     String _message = jsonO.optString("MESSAGE");
 
                     //Update Shared Preferences
-                    Functions.setPref("LOGIN_CODE", "0", context.getApplicationContext());
+                    Functions.setPref("SYSLOG_CODE", "0", context.getApplicationContext());
 
                     //Popup message for user
                     Toast.makeText(context.getApplicationContext(), _message, Toast.LENGTH_SHORT).show();
+
+                    //review the page setting
+                    init();
                 }
 
             } catch (JSONException e) {

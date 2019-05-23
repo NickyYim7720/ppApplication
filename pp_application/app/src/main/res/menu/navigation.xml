@@ -17,8 +17,14 @@
         android:title="@string/title_changeuser" />
 
     <item
+        android:id="@+id/navigation_setting"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="@string/title_setting" />
+
+    <item
         android:id="@+id/navigation_info"
         android:icon="@mipmap/info_icon"
         android:title="@string/title_info" />
+
 
 </menu>
